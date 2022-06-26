@@ -1,0 +1,12 @@
+#cloud-config
+users:
+  - name: ubuntu
+    groups: sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh_authorized_keys: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD12gl+9j97E60/7K5DQ4zdRlOALTSc0adIb59CJaNIhrSLlmPkJ7lgpPUV3cfqj8OXtyEUKlsYozy6McRHj42vPgYwwBCc+H69fN0DaThizhdlt5DyqbpUbWeIHGG4OHTqB2CY9bHn11ofBhSLPL4NU6BwnLOy7z5o4Gp7PCOBfj/Bq4EUyIzfACn7L4ow0JBYgON/3dvzGidAHWdJXFuhOZs1V+Fswlcrz1rLLPFTUutNhtr9Q0CojGpCdQ3k4NSyztYXx1SKFfM8cG25X6xPqejmJNgsSSXjwgAP/gvDqRHG7Dp8eeiH0AP7xyNclIbQXyr/2bJe7ljMEpcJLMr/pVLu748K+Qo8U2GANhZS44PTrMI+YmOewDLVt/0WKBc48R3MTuQJgq0sK2qKCJKvVKFnghxXPCZfruKyRS6d1yw31zcgUPzY31ptIH8r7QiT/X+qtUBo9vAsZWmsVfS526JxyUBBOlzoa9qAyexh6fUFeKbDmdZLhdgKO47gkV1tj3BfFD+UqvHeM77ARaqfBGKDe25YNpNqAyLoxQYf3meSdo5HjWxo+HYkq9EO8HAk9jCwmXBfwVWldwXB0+pPLlr3hyWnXrrLJFYCdUTcK+aR5yBBLdlD3pNhKP6ki3rYqevx3ufkS83p4O2j5hDpmLm3nYnWHLsovrL0wM+Zrw== teo@teo-G3-3590
+
+package_update: true
+package_upgrade: true
+packages:
+  - sl
