@@ -11,6 +11,13 @@ The only dependency for this project is Terraform and LXD. Instructions on how t
 For instance specific configuration have a look at `cloud-init.yml` and configure it for your own need. You can find more information about cloud-init [here](https://cloudinit.readthedocs.io/en/latest/index.html).
 Make sure you change `ssh_import_id` parameter, otherwise I can potentially access you VM, if accesible.
 
+### cloud-init
+
+Both admin public key and password-based authentication is enabled.
+To replace the value of hashed_passwrd, generate a password yourself using e.g.:
+
+	mkpasswd --method=SHA-512
+
 ## Run
 
 Once you have Terraform installed, have a look at `config.example.tfvars` to see how you can deploy different VMs and then run:

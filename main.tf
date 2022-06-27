@@ -25,7 +25,7 @@ locals {
     for instance in var.configuration : [
       for i in range(1, instance.count + 1) : {
         "name"  = "${instance.name}-${i}",
-        "image" = instance.image,
+        "image" = instance.image
       }
     ]
   ]
@@ -45,9 +45,10 @@ resource "lxd_network" "mynetwork" {
 resource "lxd_profile" "myprofile" {
   name = "myprofile"
   config = {
-    "limits.cpu"       = 2
-    "limits.memory"    = "2GiB"
-    "user.vendor-data" = data.template_file.cloudinit_file.rendered
+    "limits.cpu"          = 2
+    "limits.memory"       = "2GiB"
+    "user.vendor-data"    = data.template_file.cloudinit_file.rendered
+    "security.secureboot" = false
   }
   device {
     name = "eth0"
@@ -59,7 +60,7 @@ resource "lxd_profile" "myprofile" {
 }
 
 resource "lxd_container" "instance" {
-  for_each = {for instance in local.instances : instance.name => instance} 
+  for_each = { for instance in local.instances : instance.name => instance }
   name     = each.value.name
   image    = each.value.image
   type     = "virtual-machine"
