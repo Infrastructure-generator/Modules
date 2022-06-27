@@ -15,7 +15,6 @@ Make sure you change `ssh_import_id` parameter, otherwise I can potentially acce
 
 Once you have Terraform installed, run:
 
-    terraform init
-    terraform apply
+    terraform apply -var-file="config.tfvars"
     
 in order to deploy the `main.tf` configuration.
