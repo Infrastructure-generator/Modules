@@ -20,6 +20,18 @@ data "template_file" "cloudinit_file" {
   template = file("cloud-init.yml")
 }
 
+locals {
+  grouped_instances = [
+    for instance in var.configuration : [
+      for i in range(1, instance.count + 1) : {
+        "name"  = "${instance.name}-${i}",
+        "image" = instance.image,
+      }
+    ]
+  ]
+  instances = flatten(local.grouped_instances)
+}
+
 resource "lxd_network" "mynetwork" {
   name = "mynetwork"
   config = {
@@ -33,8 +45,8 @@ resource "lxd_network" "mynetwork" {
 resource "lxd_profile" "myprofile" {
   name = "myprofile"
   config = {
-    "limits.cpu"             = 2
-    "limits.memory"          = "2GiB"
+    "limits.cpu"       = 2
+    "limits.memory"    = "2GiB"
     "user.vendor-data" = data.template_file.cloudinit_file.rendered
   }
   device {
@@ -46,9 +58,10 @@ resource "lxd_profile" "myprofile" {
   }
 }
 
-resource "lxd_container" "freshy" {
-  name     = "freshy"
-  image    = "ubuntu:20.04"
+resource "lxd_container" "instance" {
+  for_each = {for instance in local.instances : instance.name => instance} 
+  name     = each.value.name
+  image    = each.value.image
   type     = "virtual-machine"
   profiles = ["default", "${lxd_profile.myprofile.name}"]
 }
