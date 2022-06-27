@@ -5,7 +5,7 @@ terraform {
       version = "1.7.2"
     }
     template = {
-      source = "hashicorp/template"
+      source  = "hashicorp/template"
       version = "2.2.0"
     }
   }
@@ -17,7 +17,7 @@ provider "lxd" {
 }
 
 data "template_file" "cloudinit_file" {
-  template = "${file("cloud-init.yml")}"
+  template = file("cloud-init.yml")
 }
 
 resource "lxd_network" "mynetwork" {
@@ -35,7 +35,7 @@ resource "lxd_profile" "myprofile" {
   config = {
     "limits.cpu"             = 2
     "limits.memory"          = "2GiB"
-    "cloud-init.vendor-data" = "${data.template_file.cloudinit_file.rendered}"
+    "user.vendor-data" = data.template_file.cloudinit_file.rendered
   }
   device {
     name = "eth0"
@@ -48,7 +48,7 @@ resource "lxd_profile" "myprofile" {
 
 resource "lxd_container" "freshy" {
   name     = "freshy"
-  image    = "ubuntu:22.04"
+  image    = "ubuntu:20.04"
   type     = "virtual-machine"
   profiles = ["default", "${lxd_profile.myprofile.name}"]
 }
