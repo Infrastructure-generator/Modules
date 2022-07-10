@@ -9,6 +9,12 @@ terraform {
       version = "2.2.0"
     }
   }
+  cloud {
+    organization = "rk-lab-fri"
+    workspaces {
+      name = "terraform-fri-vmgenerator"
+    }
+  }
 }
 
 provider "lxd" {
@@ -26,6 +32,7 @@ locals {
       for i in range(1, instance.count + 1) : {
         "name"  = "${instance.name}-${i}",
         "image" = instance.image
+	"type" = instance.type
       }
     ]
   ]
@@ -63,6 +70,6 @@ resource "lxd_container" "instance" {
   for_each = { for instance in local.instances : instance.name => instance }
   name     = each.value.name
   image    = each.value.image
-  type     = "virtual-machine"
+  type     = each.value.type
   profiles = ["default", "${lxd_profile.myprofile.name}"]
 }
