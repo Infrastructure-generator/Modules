@@ -12,7 +12,7 @@ terraform {
   cloud {
     organization = "rk-lab-fri"
     workspaces {
-      name = "terraform-fri-vmgenerator"
+      name = "terraform-fri-iocgenerator"
     }
   }
 }
