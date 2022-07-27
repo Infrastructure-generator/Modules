@@ -5,10 +5,14 @@ on:
     branches:
     - master
 
+env:
+	TF_VAR_lxdremote_password: ${{ secrets.LXDREMOTE_PASSWORD }}
+
 jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
+		timeout-minutes: 10 # It's possible for LXD to hang
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -27,4 +31,4 @@ jobs:
       run: terraform validate -no-color
     - name: Terraform Apply
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false
+      run: terraform apply -auto-approve -input=false -lock=false

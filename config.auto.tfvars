@@ -15,7 +15,7 @@ configuration = [
     "name"  = "vm-debian",
     "image" = "images:debian/12/cloud",
     "type"  = "virtual-machine",
-    "count" = 3
+    "count" = 2
   },
   {
     "name"  = "vm-centos",
