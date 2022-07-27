@@ -32,7 +32,7 @@ locals {
       for i in range(1, instance.count + 1) : {
         "name"  = "${instance.name}-${i}",
         "image" = instance.image
-	"type" = instance.type
+        "type"  = instance.type
       }
     ]
   ]
