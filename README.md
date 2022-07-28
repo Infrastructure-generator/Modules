@@ -2,6 +2,12 @@
 
 Terraform script to generate multiple VMs at once
 
+## Pre-commit
+
+This repo is using pre-commit hook to run `terraform fmt` which enforces Terraform best practices and prevents merging misformatted configuration. In order to utilize precommit hook, run:
+
+	git config core.hooksPath .githooks
+
 ## Prerequisites
 
 The only dependency for this project is Terraform and LXD. Instructions on how to install it are available [here](https://learn.hashicorp.com/tutorials/terraform/install-cli) and [here](https://linuxcontainers.org/lxd/getting-started-cli/).
