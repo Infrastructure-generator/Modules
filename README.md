@@ -7,7 +7,10 @@ Combination of Terraform and GitHub to generate and manage multitenant infrastru
 
 ## Prerequisites
 
-The only dependency for this project are [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) and [LXD](https://linuxcontainers.org/lxd/getting-started-cli/). Follow the instructions in the links to install them.
+* [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+* [LXD](https://linuxcontainers.org/lxd/getting-started-cli/)
+
+### Additional Setup 
 
 Since the Terraform state needs to be potentially shared among multiple members, we are using Terraform Cloud to keep everyone in sync. Follow the instructions [here](https://developer.hashicorp.com/terraform/tutorials/cloud-get-started/cloud-sign-up) to set it up yourself. Note that we might consider migrating this to a [remote backend](https://developer.hashicorp.com/terraform/language/settings/backends/configuration) in the future.
 
