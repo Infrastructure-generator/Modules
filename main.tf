@@ -2,17 +2,19 @@ terraform {
   required_providers {
     lxd = {
       source  = "terraform-lxd/lxd"
-      version = "1.7.2"
+      version = "1.9.0"
     }
     template = {
       source  = "hashicorp/template"
       version = "2.2.0"
     }
   }
+
   cloud {
     organization = "rk-lab-fri"
+
     workspaces {
-      name = "terraform-fri-iocgenerator"
+      name = "lab"
     }
   }
 }
@@ -20,15 +22,6 @@ terraform {
 provider "lxd" {
   generate_client_certificates = true
   accept_remote_certificate    = true
-
-  lxd_remote {
-    name     = "fri.su2u1"
-    address  = "88.200.23.229"
-    password = var.lxdremote_password
-    port     = "8443"
-    scheme   = "https"
-    default  = "true"
-  }
 }
 
 data "template_file" "cloudinit_file" {
@@ -37,7 +30,7 @@ data "template_file" "cloudinit_file" {
 
 locals {
   grouped_instances = [
-    for instance in var.configuration : [
+    for instance in jsondecode(var.configuration) : [
       for i in range(1, instance.count + 1) : {
         "name"  = "${instance.name}-${i}",
         "image" = instance.image
@@ -48,6 +41,15 @@ locals {
   instances = flatten(local.grouped_instances)
 }
 
+resource "lxd_project" "project" {
+  name        = var.environment
+  config = {
+    "features.storage.volumes" = false
+    "features.images" = false
+    "features.profiles" = false
+  }
+}
+
 resource "lxd_network" "mynetwork" {
   name = "mynetwork"
   config = {
@@ -56,6 +58,7 @@ resource "lxd_network" "mynetwork" {
     "ipv6.address" = "fd42:474b:622d:259d::1/64"
     "ipv6.nat"     = "true"
   }
+  project = lxd_project.project.name
 }
 
 resource "lxd_profile" "myprofile" {
@@ -73,6 +76,7 @@ resource "lxd_profile" "myprofile" {
       network = "${lxd_network.mynetwork.name}"
     }
   }
+  project = lxd_project.project.name
 }
 
 resource "lxd_container" "instance" {
@@ -80,5 +84,6 @@ resource "lxd_container" "instance" {
   name     = each.value.name
   image    = each.value.image
   type     = each.value.type
+  project = lxd_project.project.name
   profiles = ["default", "${lxd_profile.myprofile.name}"]
 }
