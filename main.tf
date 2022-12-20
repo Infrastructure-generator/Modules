@@ -22,6 +22,15 @@ terraform {
 provider "lxd" {
   generate_client_certificates = true
   accept_remote_certificate    = true
+
+  lxd_remote {
+    name     = "tjp1"
+    address  = "88.20.23.229"
+    password = var.lxdremote_password
+    port     = "8443"
+    scheme   = "https"
+    default  = "true"
+  }
 }
 
 data "template_file" "cloudinit_file" {
