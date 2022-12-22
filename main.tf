@@ -10,11 +10,11 @@ terraform {
     }
   }
 
-  cloud {
+  backend "remote" {
     organization = "rk-lab-fri"
 
     workspaces {
-      name = "lab"
+      prefix = "fri-"
     }
   }
 }
