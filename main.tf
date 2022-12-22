@@ -25,7 +25,7 @@ provider "lxd" {
 
   lxd_remote {
     name     = "tjp1"
-    address  = "88.20.23.229"
+    address  = "88.200.23.239"
     password = var.lxdremote_password
     port     = "8443"
     scheme   = "https"
