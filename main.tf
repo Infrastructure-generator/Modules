@@ -37,19 +37,6 @@ data "template_file" "cloudinit_file" {
   template = file("cloud-init.yml")
 }
 
-locals {
-  grouped_instances = [
-    for instance in jsondecode(var.configuration) : [
-      for i in range(1, instance.count + 1) : {
-        "name"  = "${instance.name}-${i}",
-        "image" = instance.image
-        "type"  = instance.type
-      }
-    ]
-  ]
-  instances = flatten(local.grouped_instances)
-}
-
 resource "lxd_project" "project" {
   name        = var.environment
   config = {
@@ -59,33 +46,77 @@ resource "lxd_project" "project" {
   }
 }
 
-resource "lxd_network" "mynetwork" {
-  name = "mynetwork"
-  config = {
-    "ipv4.address" = "10.150.19.1/24"
-    "ipv4.nat"     = "true"
-    "ipv6.address" = "fd42:474b:622d:259d::1/64"
-    "ipv6.nat"     = "true"
-  }
-  project = lxd_project.project.name
+locals {
+  grouped_instances = [
+    for instance in jsondecode(var.instances) : [
+      for i in range(1, instance.count + 1) : {
+        "name"    = "${instance.name}-${i}",
+        "image"   = instance.image,
+        "type"    = instance.type,
+	"profile" = instance.profile,
+      }
+    ]
+  ]
+  instances = flatten(local.grouped_instances)
+
+  grouped_networks = [
+    for network in jsondecode(var.networks) : [
+      {
+        "name"  = "${network.name}",
+      }
+    ]
+  ]
+  networks = flatten(local.grouped_networks)
+
+  grouped_profiles = [
+    for profile in jsondecode(var.profiles) : [
+      {
+        "name"  = "${profile.name}",
+        "network"  = "${profile.network}",
+      }
+    ]
+  ]
+  profiles = flatten(local.grouped_profiles)
 }
 
-resource "lxd_profile" "myprofile" {
-  name = "myprofile"
+resource "lxd_network" "network" {
+  for_each = { for network in local.networks : network.name => network }
+  name     = each.value.name
+  project = lxd_project.project.name
+  config = {
+    "ipv4.address" = "10.150.20.1/24"
+    "ipv4.nat"     = "true"
+  }
+}
+
+resource "lxd_profile" "profile" {
+  for_each = { for profile in local.profiles : profile.name => profile }
+  name     = each.value.name
+  project = lxd_project.project.name
   config = {
     "limits.cpu"          = 2
     "limits.memory"       = "2GiB"
     "user.vendor-data"    = data.template_file.cloudinit_file.rendered
     "security.secureboot" = false
   }
+
   device {
     name = "eth0"
     type = "nic"
     properties = {
-      network = "${lxd_network.mynetwork.name}"
+      network = each.value.network 
     }
   }
-  project = lxd_project.project.name
+
+  device {
+    type = "disk"
+    name = "root"
+
+    properties = {
+      pool = "default"
+      path = "/"
+    }
+  }
 }
 
 resource "lxd_container" "instance" {
@@ -94,5 +125,5 @@ resource "lxd_container" "instance" {
   image    = each.value.image
   type     = each.value.type
   project = lxd_project.project.name
-  profiles = ["default", "${lxd_profile.myprofile.name}"]
+  profiles = [ "default", each.value.profile ]
 }

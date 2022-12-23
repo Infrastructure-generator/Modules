@@ -1,6 +1,16 @@
-variable "configuration" {
+variable "instances" {
   default     = [{}]
   description = "List of virtual machines and their corresponding configuration"
+}
+
+variable "networks" {
+  default     = [{}]
+  description = "List of networks and their corresponding configuration"
+}
+
+variable "profiles" {
+  default     = [{}]
+  description = "List of profiles and their corresponding configuration"
 }
 
 variable "lxdremote_password" {
