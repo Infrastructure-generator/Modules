@@ -1,51 +1,3 @@
-terraform {
-  required_providers {
-    lxd = {
-      source  = "terraform-lxd/lxd"
-      version = "1.9.0"
-    }
-    template = {
-      source  = "hashicorp/template"
-      version = "2.2.0"
-    }
-  }
-
-  backend "remote" {
-    organization = "rk-lab-fri"
-
-    workspaces {
-      prefix = "fri-"
-    }
-  }
-}
-
-provider "lxd" {
-  generate_client_certificates = true
-  accept_remote_certificate    = true
-
-  lxd_remote {
-    name     = "tjp1"
-    address  = "88.200.23.239"
-    password = var.lxdremote_password
-    port     = "8443"
-    scheme   = "https"
-    default  = "true"
-  }
-}
-
-data "template_file" "cloudinit_file" {
-  template = file("cloud-init.yml")
-}
-
-resource "lxd_project" "project" {
-  name        = var.environment
-  config = {
-    "features.storage.volumes" = false
-    "features.images" = false
-    "features.profiles" = false
-  }
-}
-
 locals {
   grouped_instances = [
     for instance in jsondecode(var.instances) : [
@@ -77,6 +29,15 @@ locals {
     ]
   ]
   profiles = flatten(local.grouped_profiles)
+}
+
+resource "lxd_project" "project" {
+  name        = var.environment
+  config = {
+    "features.storage.volumes" = false
+    "features.images" = false
+    "features.profiles" = false
+  }
 }
 
 resource "lxd_network" "network" {
