@@ -14,7 +14,13 @@ Since the Terraform state needs to be potentially shared among multiple members,
 You also need to make sure your [LXD socket is exposed to the network](https://linuxcontainers.org/lxd/docs/master/howto/server_expose/). Relevant configuration should be applied inside the `main.tf` in order to succefully authenticate with the remote LXD server.
 
 
-## Instance specific configuration
+## Configuration
+
+### LXD Terraform Provider features
+
+Currently only `network`, `project`, `profile`, `container/vm` LXD features are supportes, but others can be easily added.
+
+### cloud-init.yml
 
 For instance specific configuration have a look at `cloud-init.yml` and configure it for your own need. You can find more information about cloud-init [here](https://cloudinit.readthedocs.io/en/latest/index.html).
 
