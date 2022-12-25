@@ -1,6 +1,6 @@
 locals {
   grouped_instances = [
-    for instance in jsondecode(var.instances) : [
+    for instance in var.instances : [
       for i in range(1, instance.count + 1) : {
         "name"    = "${instance.name}-${i}",
         "image"   = instance.image,
@@ -12,7 +12,7 @@ locals {
   instances = flatten(local.grouped_instances)
 
   grouped_networks = [
-    for network in jsondecode(var.networks) : [
+    for network in var.networks : [
       {
         "name"  = "${network.name}",
       }
@@ -21,7 +21,7 @@ locals {
   networks = flatten(local.grouped_networks)
 
   grouped_profiles = [
-    for profile in jsondecode(var.profiles) : [
+    for profile in var.profiles : [
       {
         "name"  = "${profile.name}",
         "network"  = "${profile.network}",
